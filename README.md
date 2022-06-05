@@ -1,82 +1,27 @@
-# `Rust support for RP2040 microcontrollers`
+# Reboot to USB mode on panic
 
-This repository contains peripheral access crates (PAC), hardware
-abstraction layers (HAL) and board support packages for the
-RP2040 and related microcontroller and boards using it, like the
-[Raspberry Pi Pico](https://www.raspberrypi.org/products/raspberry-pi-pico/).
+On panic, the USB boot mode implemented in ROM will be
+called, providing access for UF2 uploads and `picotool`.
 
-## Related projects
+# Usage
 
-There is a similar project called [rp-rs](https://github.com/rp-rs)
-which is much more active than this one.
-
-**As [rp-rs](https://github.com/rp-rs) is in a more usable state, most
-people should prefer that one, currently.**
-
-## Prerequisites
-
-The Rasperry Pi Pico contains a microcontroller using the Arm architecture. To
-cross-compile for that architecture, the matching target needs to be installed:
+Just add this to your `main.rs`:
 
 ```
-rustup target add thumbv6m-none-eabi
+extern crate rp2040_panic_usb_boot;
 ```
 
-## Repository structure
+# Panic messages
 
-The structure is modelled after the repository for
-[atsamd](https://github.com/atsamd-rs/atsamd).
+Additionally, panic messages are written to the XIP RAM,
+after disabling XIP caching.
 
-This assumes that the RP2040 will be accompanied by
-a family of relatec microcontrolles. (See chapter
-"Why is the chip called RP2040?" in the [RP2040
-datasheet](https://datasheets.raspberrypi.org/rp2040/rp2040_datasheet.pdf)).
+That way, the panic message can be read using picotool:
 
-## Current state / TODO
-
-Currently, there is a PAC generated from the SVD file, a
-minimal board support crate and a stub HAL.
-
-The goal is to first get a working firmware which can be
-uploaded to the Raspberry Pi Pico, and then implement the
-[embedded-hal](https://crates.io/crates/embedded-hal) interface.
-
-For now, a simple blinky example can be compiled.
-It is completely untested, as I do not yet have access to the hardware.
-
-A TODO list can be found in the
-[wiki](https://github.com/jannic/rp-microcontroller-rs/wiki).
-
-## Usage
-
-An example blinking a LED can be compiled with:
-
-``` sh
-cd boards/rp-pico
-cargo build --target thumbv6m-none-eabi --example=blink  --release
+```
+picotool save -r 0x15000000 0x15004000 message.bin
+hexdump -C message.bin
 ```
 
-To re-generate the rust source code from svd files, some tools are
-necessary.  Once they are installed, use `generate.sh` to call `svd2rust`
-and format the source code using `form`.
-
-``` sh
-cargo install svd2rust
-cargo install form
-sh generate.sh
-```
-
-
-On how to setup on chip debugging please check out [ON-CHIP_DEBUGGING.md](ON-CHIP_DEBUGGING.md)
-
-## License
-
-The register definition file `rp2040.svd` was downloaded from the
-[raspberrypi/pico-sdk repo](https://raw.githubusercontent.com/raspberrypi/pico-sdk/26653ea81e340cacee55025d110c3e014a252a87/src/rp2040/hardware_regs/rp2040.svd).
-It is Copyright 2020 (c) 2020 Raspberry Pi (Trading) Ltd. and is licensed
-under the [BSD-3-Clause License](LICENSE-Raspberry-Pi).
-
-The rest of this repository is licensed under the terms of both the
-[MIT license](LICENSE-MIT) and the [Apache License (Version 2.0)](LICENSE-APACHE), at your option.
-
-Parts of this code was copied from [rp-rs](https://github.com/rp-rs/), which is published under the same license.
+The RAM contents can be read the same way, by reading from
+address `0x20000000`.
