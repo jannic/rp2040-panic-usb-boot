@@ -1,11 +1,32 @@
 #![no_std]
 
+use core::fmt::Write;
 use core::panic::PanicInfo;
-use cortex_m;
+use rp2040_hal::pac as rp2040;
 
-use rp_hal::target_device as rp2040;
+struct Cursor<'a> {
+    buf: &'a mut [u8],
+    pos: usize,
+}
 
-use bare_io::{Cursor, Write};
+impl<'a> Cursor<'a> {
+    fn new(buf: &'a mut [u8]) -> Cursor<'a> {
+        Cursor { buf, pos: 0 }
+    }
+}
+
+impl<'a> core::fmt::Write for Cursor<'a> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        let len = s.as_bytes().len();
+        if len < self.buf.len() - self.pos {
+            self.buf[self.pos..self.pos + len].clone_from_slice(s.as_bytes());
+            self.pos += len;
+            Ok(())
+        } else {
+            Err(core::fmt::Error)
+        }
+    }
+}
 
 #[inline(never)]
 #[panic_handler]
@@ -37,7 +58,6 @@ fn panic(info: &PanicInfo) -> ! {
     }
 
     // jump to usb
-    rp_hal::rom_data::reset_to_usb_boot(0, 0);
+    rp2040_hal::rom_data::reset_to_usb_boot(0, 0);
     loop {}
 }
-

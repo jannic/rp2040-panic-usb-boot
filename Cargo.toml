@@ -11,11 +11,5 @@ homepage = "https://github.com/jannic/rp-microcontroller-rs/"
 
 [dependencies]
 cortex-m = "0.7.1"
-bare-io = "0.2.1"
-
-[dependencies.rp-hal]
-version = "0.0.2"
-path = "../../hal/"
-default-features = false
-features = ["2040"]
-
+rp2040-hal = "0.4.0"
+heapless = "0.7.13"
