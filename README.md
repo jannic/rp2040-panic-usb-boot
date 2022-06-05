@@ -8,7 +8,7 @@ called, providing access for UF2 uploads and `picotool`.
 Just add this to your `main.rs`:
 
 ```
-extern crate rp2040_panic_usb_boot;
+use rp2040_panic_usb_boot as _;
 ```
 
 # Panic messages
@@ -23,5 +23,5 @@ picotool save -r 0x15000000 0x15004000 message.bin
 hexdump -C message.bin
 ```
 
-The RAM contents can be read the same way, by reading from
+RAM contents can be read the same way, by reading from
 address `0x20000000`.
