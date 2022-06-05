@@ -13,3 +13,9 @@ homepage = "https://github.com/jannic/rp-microcontroller-rs/"
 cortex-m = "0.7.1"
 rp2040-hal = "0.4.0"
 heapless = "0.7.13"
+
+[dev-dependencies]
+rp-pico = "0.3.0"
+cortex-m-rt = "0.7.1"
+embedded-time = "0.12.1"
+embedded-hal = "0.2.7"
