@@ -8,7 +8,7 @@ description = "On panic, boot to USB mode implmented in ROM"
 readme = "README.md"
 repository = "https://github.com/jannic/rp2040-panic-usb-boot/"
 homepage = "https://github.com/jannic/rp2040-panic-usb-boot/"
-keywords = ["panic-handler", "no-std", "embedded"]
+keywords = ["panic-handler", "panic-impl", "no-std", "embedded"]
 
 [dependencies]
 cortex-m = "0.7.1"
