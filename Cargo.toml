@@ -12,7 +12,7 @@ keywords = ["panic-handler", "panic-impl", "no-std", "embedded"]
 
 [dependencies]
 cortex-m = "0.7.1"
-rp2040-hal = { version = "0.7.0", default-features = false }
+rp2040-hal = { version = "0.8.0", default-features = false }
 
 [dev-dependencies]
 rp-pico = "0.6.0"
