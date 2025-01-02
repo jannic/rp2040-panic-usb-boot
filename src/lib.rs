@@ -35,7 +35,7 @@ fn panic(info: &PanicInfo) -> ! {
     let p = unsafe { rp2040::Peripherals::steal() };
     // disable XIP cache so cache ram becomes usable
     p.XIP_CTRL
-        .ctrl
+        .ctrl()
         .write(|w| w.power_down().clear_bit().en().clear_bit());
 
     // write panic message to XIP RAM
@@ -44,17 +44,17 @@ fn panic(info: &PanicInfo) -> ! {
     write!(&mut cur, "{}\n\0", info).ok();
 
     // For usb_boot to work, XOSC needs to be running
-    if !(p.XOSC.status.read().stable().bit()) {
-        p.XOSC.startup.write(|w| unsafe {
+    if !(p.XOSC.status().read().stable().bit()) {
+        p.XOSC.startup().write(|w| unsafe {
             w.delay().bits((12_000 /*kHz*/ + 128) / 256)
         });
-        p.XOSC.ctrl.write(|w| {
+        p.XOSC.ctrl().write(|w| {
             w.freq_range()
                 .variant(rp2040::xosc::ctrl::FREQ_RANGE_A::_1_15MHZ)
                 .enable()
                 .variant(rp2040::xosc::ctrl::ENABLE_A::ENABLE)
         });
-        while !(p.XOSC.status.read().stable().bit()) {}
+        while !(p.XOSC.status().read().stable().bit()) {}
     }
 
     // jump to usb
