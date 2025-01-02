@@ -1,16 +1,12 @@
 #![no_main]
 #![no_std]
 
-use rp2040_hal as hal;
-
-use rp2040_panic_usb_boot as _;
-
 use cortex_m_rt::entry;
-
-use rp_pico::hal::pac;
-
-use embedded_hal::digital::v2::OutputPin;
-use rp2040_hal::Clock;
+use embedded_hal::digital::OutputPin;
+use hal::pac;
+use hal::Clock;
+use rp2040_hal as hal;
+use rp2040_panic_usb_boot as _;
 
 /* Blink LED a few times, like blinky example, and then panic */
 
