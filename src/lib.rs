@@ -40,8 +40,14 @@ fn panic(info: &PanicInfo) -> ! {
 
     // write panic message to XIP RAM
     let buf: &mut [u8] = unsafe { core::slice::from_raw_parts_mut(0x15000000 as *mut u8, 0x4000) };
-    let mut cur = Cursor::new(buf);
-    write!(&mut cur, "{}\n\0", info).ok();
+    let written = {
+        let mut cur = Cursor::new(buf);
+        write!(&mut cur, "{}\n\0", info).ok();
+        cur.pos
+    };
+
+    // Clear the rest of XIP RAM so it's not full of garbage when dumped
+    buf[written..0x4000].fill(0);
 
     // For usb_boot to work, XOSC needs to be running
     if !(p.XOSC.status.read().stable().bit()) {
