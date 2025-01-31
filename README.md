@@ -20,7 +20,7 @@ That way, the panic message can be read using picotool, eg.:
 
 ```
 picotool save -r 0x15000000 0x15004000 message.bin
-strings message.bin | head
+cat message.bin
 ```
 
 RAM contents can be read the same way, by reading from
